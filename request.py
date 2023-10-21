@@ -11,10 +11,12 @@ import requests
 
 # %% data dowload functions
 
-def get_data(url):
-    api_url = url
+def get_data(api_url, params=None):
     try:
-        response = requests.get(api_url)
+        if params == None:
+            response = requests.get(api_url)
+        else:
+            response = requests.get(api_url, params = params)
         if response.status_code == 200:
             data = response.json()
             return data
@@ -29,20 +31,19 @@ def get_data(url):
 def req(pages):
     data = []
     for i in range(pages):
-        url = "https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2022-01-01" + "&pageNumber=" + str(
-            i)
+        url = "https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2022-01-01" + "&pageNumber=" + str(i)
         data_add = get_data(url)["items"]
         if data_add != None:
             data += get_data(url)["items"]
     return data
 
 
-def get_data_pages(pages, url):
+def get_data_pages(pages, url, params=None):
     data = []
     base_url = url
     for i in range(pages):
         tmp_url = base_url + "&pageNumber=" + str(i)
-        data_add = get_data(tmp_url)["items"]
+        data_add = get_data(tmp_url, params)["items"]
         if data_add != None:
             data += data_add
     return data
@@ -63,9 +64,21 @@ loaded_data = get_data_pages(pages, basic_url)
 
 len(loaded_data)
 
-# itemki - n pages from 01-01-2022
-itemki = req(10)
 
+def load_n_decisions(n, page_size, year):
+    pages = int(decisions / page_size) + 1
+    params = {'pageSize': str(page_size), 'judgmentStartDate': str(year) + '-01-01'}
+    basic_url = "https://www.saos.org.pl/api/dump/judgments?"
+    loaded_data = get_data_pages(pages, basic_url, params)
+    return loaded_data
+
+loaded_data2 = load_n_decisions(5835, 100, 2023)
+
+loaded_data[-1]["id"]
+loaded_data2[-3]["id"]
+loaded_data2[-2]["id"]
+loaded_data2[-1]["id"]
+# two additional ones?
 
 # %% what if we take too many items
 
@@ -75,6 +88,9 @@ experiment = get_data(
 len(experiment)  # 33 even i though we took 100 items and it still works
 
 # %% counting decisions
+
+# itemki - n pages from 01-01-2022
+itemki = req(10)
 
 decisions = 0
 for i in range(len(itemki)):
