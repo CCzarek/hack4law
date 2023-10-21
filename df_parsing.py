@@ -19,6 +19,7 @@ df.drop(columns=['Unnamed: 0', 'decision', 'receiptDate','meansOfAppeal', 'judgm
 
 df.info()
 
+format = '%Y-%m-%d'
 
 # convert from string format to datetime format
 
