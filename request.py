@@ -35,7 +35,7 @@ except Exception as e:
     print(f"An error occurred: {e}")
 
 
-# %% data dowload functions
+#%% data dowload functions
 
 def get_data(url):
     api_url = url
