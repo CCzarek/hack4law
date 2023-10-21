@@ -65,8 +65,9 @@ def req(pages):
 
 def get_data_pages(pages, url):
     data = []
+    base_url = url
     for i in range(pages):
-        url = "&pageNumber=" + str(i)
+        url = base_url + "&pageNumber=" + str(i)
         data_add = get_data(url)["items"]
         if data_add != None:
             data += get_data(url)["items"]
