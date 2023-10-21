@@ -19,6 +19,10 @@ df.drop(columns=['Unnamed: 0', 'decision', 'receiptDate','meansOfAppeal', 'judgm
 
 df.info()
 
+# summary ma 10% wartosci, a to sa te nie nany
+df[df['summary'].notna()]['summary']
+len(df[df['summary'].notna()]['summary'])
+
 format = '%Y-%m-%d'
 
 # convert from string format to datetime format
