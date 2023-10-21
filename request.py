@@ -117,16 +117,32 @@ set(e1)
 set(e1).difference(set(e2))
 
 
-# %% everything to to csv
+# %% everything to csv
 import pandas as pd
 
-
-df = pd.DataFrame(columns=['id', 'courtType', 'courtCases', 'judgmentType', 'judges', 'source', 'courtReporters', 'decision', 'summary', 'textContent', 'legalBases', 'referencedRegulations', 'keywords', 'referencedCourtCases', 'receiptDate', 'meansOfAppeal', 'judgmentResult', 'lowerCourtJudgments', 'division', 'judgmentDate'])
+selected_columns = ['id', 'courtType', 'courtCases', 'judgmentType', 'judges', 'source', 'courtReporters', 'decision', 'summary', 'textContent', 'legalBases', 'referencedRegulations', 'keywords', 'referencedCourtCases', 'receiptDate', 'meansOfAppeal', 'judgmentResult', 'lowerCourtJudgments', 'division', 'judgmentDate']
+df = pd.DataFrame(columns=selected_columns)
 
 loaded_data[0].keys()
 
 orzeczenia_num = len(loaded_data)
 for i in range (orzeczenia_num):
     df.loc[len(df)] = list(loaded_data[i].values())
-
+    
 df.to_csv("2023_orzeczenia.csv")
+
+
+#%% does not work - TODO
+
+import numpy as np
+row = np.empty(len(selected_columns))
+row.fill(np.NaN)
+
+for i in range(len(loaded_data)):
+    i=0
+    df1.loc[i] = row
+    for feature in selected_columns:
+        #df1.loc[i, feature] = loaded_data[i][feature]
+
+
+
