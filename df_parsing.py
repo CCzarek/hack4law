@@ -1,10 +1,14 @@
 import pandas as pd
 import datetime
+import ast
 import re
+import pickle
 
 
 pd.set_option('display.max_columns', None)
 df = pd.read_csv('2023_orzeczenia.csv')
+
+df['keywords'] = df['keywords'].apply(ast.literal_eval)
 
 print(df.columns)
 #print(df['decision'])
@@ -44,12 +48,21 @@ for (_, orzeczenie) in df.iterrows():
     if datetime.datetime.today() < datetime.datetime.strptime(orzeczenie['judgmentDate'], format):
         df.drop(_, inplace=True)
 
+print(df['summary'].values[100], print(df['summary'].values[200]))
+
+
+keywordsList = df['keywords'].tolist()
+keywords = set()
+for listk in keywordsList:
+    for el in listk:
+        keywords.add(el)
+        
 
 # cleaning textContent
 CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
   cleantext = re.sub(CLEANR, '', raw_html)
-
+  cleantext = re.sub(' +', ' ', cleantext)
   return cleantext.strip()
 
 #print(df['textContent'][5839])
@@ -57,3 +70,8 @@ df['textContent'] = df['textContent'].apply(lambda x: cleanhtml(str(x)))
 df['textContent'] = df['textContent'].apply(lambda x: x.replace('\n', ' ').replace('\r', ''))
 
 print(df['textContent'])
+
+df.to_pickle("df")
+
+firstRow = df.iloc[0]
+
