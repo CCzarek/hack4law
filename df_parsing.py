@@ -133,7 +133,6 @@ def translate_text(text):
     sentences = sent_tokenize(text)
     to_tranlate = ''
     translated = ''
-    
     for sentence in sentences:
         if length + len(sentence) < max_len:
             to_tranlate += sentence
@@ -153,7 +152,6 @@ def translate_text(text):
             else:
                 # strange words
                 translated += word
-    
     # the last translation
     if to_tranlate != '':
         translated += translator.translate(to_tranlate)
@@ -162,6 +160,13 @@ def translate_text(text):
     
 
 df['textContent_translated'] = df['textContent_notags'].apply(lambda x: translate_text(x))
+
+def simplify_text(text):
+    vals = list([val.lower() for val in text if val.isalnum() or val == " "])
+    return "".join(vals)
+
+df['textContent_translated'] = df['textContent_translated'].apply(lambda x: simplify_text(x))
+
 
 df.to_csv('preprocessed_2023.csv')
 
