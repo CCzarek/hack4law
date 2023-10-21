@@ -10,7 +10,7 @@ Created on Sat Oct 21 10:47:53 2023
 import requests
 
 # Define the URL of the REST API
-api_url = "https://www.saos.org.pl/api/dump/judgments"
+api_url = "https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2020-01-01"
 
 try:
     # Send an HTTP GET request to the API URL
@@ -23,8 +23,8 @@ try:
 
         # Now you can work with the JSON data as a Python dictionary
         # For example, print the first 10 items
-        for item in data['items']:
-            print(item)
+        #for item in data['items']:
+        #    print(item)
 
     else:
         print(f"Failed to retrieve data. Status code: {response.status_code}")
@@ -34,6 +34,35 @@ except requests.exceptions.RequestException as e:
 except Exception as e:
     print(f"An error occurred: {e}")
     
+    
+    
+    
+def get_data(url):
+    api_url = url
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            data = response.json()
+        else:
+            print(f"Failed to retrieve data. Status code: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+def req(pages):
+    data = []
+    for i in range(pages):
+        url = "https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2010-01-01" + "&pageNumber=" + str(i)
+        data_add = get_data(url)["items"]
+        if data_add != None:
+            data += get_data(url)["items"]
+    return data
+    
+
+itemki = req(10)
+
 
 print(data.keys)
 data.keys()
@@ -52,4 +81,13 @@ len(data["items"])
 data["queryTemplate"]
 data["info"]
 type(data["info"])
+
+
+decisions = 0
+for i in range(len(data["items"])):
+    if data["items"][i]["decision"] != None:
+        decisions += 1
+print(decisions)
+
+[1, 2, 3] + [3, 5, 6]
 
