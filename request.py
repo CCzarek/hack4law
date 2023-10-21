@@ -134,15 +134,15 @@ df.to_csv("2023_orzeczenia.csv")
 
 #%% does not work - TODO
 
-import numpy as np
-row = np.empty(len(selected_columns))
-row.fill(np.NaN)
+# import numpy as np
+# row = np.empty(len(selected_columns))
+# row.fill(np.NaN)
 
-for i in range(len(loaded_data)):
-    i=0
-    df1.loc[i] = row
-    for feature in selected_columns:
-        #df1.loc[i, feature] = loaded_data[i][feature]
+# for i in range(len(loaded_data)):
+#     i=0
+#     df1.loc[i] = row
+#     for feature in selected_columns:
+#         df1.loc[i, feature] = loaded_data[i][feature]
 
 
 
