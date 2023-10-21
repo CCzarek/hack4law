@@ -35,7 +35,7 @@ except Exception as e:
     print(f"An error occurred: {e}")
     
     
-    
+#%% data dowload functions
     
 def get_data(url):
     api_url = url
@@ -60,7 +60,67 @@ def req(pages):
         if data_add != None:
             data += get_data(url)["items"]
     return data
-    
+
+def get_data_pages(pages, url):
+    data = []
+    for i in range(pages):
+        url += "&pageNumber=" + str(i)
+        data_add = get_data(url)["items"]
+        if data_add != None:
+            data += get_data(url)["items"]
+    return data
+# returns concatenated lists of items (dicts) available to pickle
+
+#%% saving results
+import pickle
+
+# Function to save a list to a file using pickle
+def save_list_to_file(file_name, my_list):
+    try:
+        with open(file_name, "wb") as file:
+            pickle.dump(my_list, file)
+        print(f"List saved to {file_name}")
+    except Exception as e:
+        print(f"Error saving list to file: {e}")
+
+# Function to load a list from a file using pickle
+def load_list_from_file(file_name):
+    try:
+        with open(file_name, "rb") as file:
+            loaded_list = pickle.load(file)
+        return loaded_list
+    except Exception as e:
+        print(f"Error loading list from file: {e}")
+        return []
+
+# Sample list
+my_list = [1, 2, 3, 4, 5]
+
+# Save the list to a file
+save_list_to_file("my_list.pkl", my_list)
+
+# Load the list from the file
+loaded_list = load_list_from_file("my_list.pkl")
+
+print("Original List:", my_list)
+print("Loaded List:", loaded_list)
+
+#%% loading all decisions from one year
+
+page_size = 100 # const
+decisions = 5835 # decisions in 2023 (check on https://www.saos.org.pl/analysis)
+pages = int(decisions / page_size) + 1
+year = 2023 # to set
+basic_url = "https://www.saos.org.pl/api/dump/judgments?pageSize=" + str(page_size) + "&judgmentStartDate=" + str(year) + "-01-01&judgmentEndDate=" + str(year + 1) + "-01-01"
+loaded_data = get_data_pages(pages, basic_url)
+len(loaded_data)
+
+save_list_to_file("data2023.pkl", loaded_data)
+loaded_list = load_list_from_file("data2023.pkl")
+
+loaded_data == loaded_list
+
+#%% ?    
 
 itemki = req(10)
 
@@ -106,43 +166,11 @@ e2 = d2[0]
 e1.keys()
 e2.keys()
 
+d1[1]["referencedCourtCases"]
+
 set(e1)
 
 set(e1).difference(set(e2))
-
-#%% saving results
-import pickle
-
-# Function to save a list to a file using pickle
-def save_list_to_file(file_name, my_list):
-    try:
-        with open(file_name, "wb") as file:
-            pickle.dump(my_list, file)
-        print(f"List saved to {file_name}")
-    except Exception as e:
-        print(f"Error saving list to file: {e}")
-
-# Function to load a list from a file using pickle
-def load_list_from_file(file_name):
-    try:
-        with open(file_name, "rb") as file:
-            loaded_list = pickle.load(file)
-        return loaded_list
-    except Exception as e:
-        print(f"Error loading list from file: {e}")
-        return []
-
-# Sample list
-my_list = [1, 2, 3, 4, 5]
-
-# Save the list to a file
-save_list_to_file("my_list.pkl", my_list)
-
-# Load the list from the file
-loaded_list = load_list_from_file("my_list.pkl")
-
-print("Original List:", my_list)
-print("Loaded List:", loaded_list)
 
 #%% test
 
