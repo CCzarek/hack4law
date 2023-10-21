@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import datetime
 import ast
@@ -100,6 +101,8 @@ df.drop(columns=['judges', 'source', 'courtReporters', 'referencedRegulations', 
 
 df.info()
 
+df.replace(['None', 'nan'], np.nan, inplace=True)
+df.fillna(' ', inplace=True)
 
 ## sth here ##
 df.to_csv('preprocessed_2023.csv')
