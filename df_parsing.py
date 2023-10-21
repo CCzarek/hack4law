@@ -32,7 +32,7 @@ for (_, orzeczenie) in df.iterrows():
 #print(max(datatime(df['judgmentDate']))
 print(max_data)
 
-# sprawdzanie czy nie ma duplikatow
+# sprawdzanie czy dziala (czy bez duplikatow)
 print(df.duplicated())
 
 print(sum(df.duplicated()))

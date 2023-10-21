@@ -9,32 +9,6 @@ Created on Sat Oct 21 10:47:53 2023
 
 import requests
 
-# Define the URL of the REST API
-api_url = "https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2020-01-01"
-
-try:
-    # Send an HTTP GET request to the API URL
-    response = requests.get(api_url)
-
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        # Parse the JSON data from the response
-        data = response.json()
-
-        # Now you can work with the JSON data as a Python dictionary
-        # For example, print the first 10 items
-        # for item in data['items']:
-        #    print(item)
-
-    else:
-        print(f"Failed to retrieve data. Status code: {response.status_code}")
-
-except requests.exceptions.RequestException as e:
-    print(f"Request error: {e}")
-except Exception as e:
-    print(f"An error occurred: {e}")
-
-
 # %% data dowload functions
 
 def get_data(url):
@@ -67,38 +41,12 @@ def get_data_pages(pages, url):
     data = []
     base_url = url
     for i in range(pages):
-        url = base_url + "&pageNumber=" + str(i)
-        data_add = get_data(url)["items"]
+        tmp_url = base_url + "&pageNumber=" + str(i)
+        data_add = get_data(tmp_url)["items"]
         if data_add != None:
-            data += get_data(url)["items"]
+            data += data_add
     return data
 
-
-# returns concatenated lists of items (dicts) available to pickle
-
-# %% saving results
-import pickle
-
-
-# Function to save a list to a file using pickle
-def save_list_to_file(file_name, my_list):
-    try:
-        with open(file_name, "wb") as file:
-            pickle.dump(my_list, file)
-        print(f"List saved to {file_name}")
-    except Exception as e:
-        print(f"Error saving list to file: {e}")
-
-
-# Function to load a list from a file using pickle
-def load_list_from_file(file_name):
-    try:
-        with open(file_name, "rb") as file:
-            loaded_list = pickle.load(file)
-        return loaded_list
-    except Exception as e:
-        print(f"Error loading list from file: {e}")
-        return []
 
 
 # %% loading all decisions from one year
@@ -109,35 +57,15 @@ pages = int(decisions / page_size) + 1
 year = 2023  # to set
 basic_url = "https://www.saos.org.pl/api/dump/judgments?pageSize=" + str(page_size) + "&judgmentStartDate=" + str(
     year) + "-01-01&judgmentEndDate=" + str(year + 1) + "-01-01"
+
 loaded_data = get_data_pages(pages, basic_url)
+
+
 len(loaded_data)
 
-save_list_to_file("data2023.pkl", loaded_data)
-loaded_list = load_list_from_file("data2023.pkl")
-
-loaded_data == loaded_list
-
-# %% ?
-
+# itemki - n pages from 01-01-2022
 itemki = req(10)
 
-print(data.keys)
-data.keys()
-
-['links', 'items', 'queryTemplate', 'info']
-
-data["links"]
-data["items"]
-type(data["items"])
-data["items"][0]
-type(data["items"][0])
-data["items"][0].keys()
-# data["items] = data + extract features as dict keys
-len(data["items"])
-
-data["queryTemplate"]
-data["info"]
-type(data["info"])
 
 # %% what if we take too many items
 
@@ -172,12 +100,6 @@ set(e1)
 
 set(e1).difference(set(e2))
 
-# %% test
-
-save_list_to_file("my_list.pkl", d1)
-loaded_list = load_list_from_file("my_list.pkl")
-
-print(loaded_list)
 
 # %% everything to to csv
 import pandas as pd
@@ -185,12 +107,10 @@ import pandas as pd
 
 df = pd.DataFrame(columns=['id', 'courtType', 'courtCases', 'judgmentType', 'judges', 'source', 'courtReporters', 'decision', 'summary', 'textContent', 'legalBases', 'referencedRegulations', 'keywords', 'referencedCourtCases', 'receiptDate', 'meansOfAppeal', 'judgmentResult', 'lowerCourtJudgments', 'division', 'judgmentDate'])
 
-loaded_list[0].keys()
-pd.DataFrame.from_dict(loaded_list[0])
+loaded_data[0].keys()
 
-
-orzeczenia_num = len(loaded_list)
+orzeczenia_num = len(loaded_data)
 for i in range (orzeczenia_num):
-    df.loc[len(df)] = list(loaded_list[i].values())
+    df.loc[len(df)] = list(loaded_data[i].values())
 
 df.to_csv("2023_orzeczenia.csv")
