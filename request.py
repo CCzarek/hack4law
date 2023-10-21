@@ -43,6 +43,7 @@ def get_data(url):
         response = requests.get(api_url)
         if response.status_code == 200:
             data = response.json()
+            return data
         else:
             print(f"Failed to retrieve data. Status code: {response.status_code}")
     except requests.exceptions.RequestException as e:
@@ -84,10 +85,10 @@ type(data["info"])
 
 
 decisions = 0
-for i in range(len(data["items"])):
-    if data["items"][i]["decision"] != None:
+for i in range(len(itemki)):
+    if itemki[i]["decision"] != None:
         decisions += 1
 print(decisions)
 
-[1, 2, 3] + [3, 5, 6]
+
 
