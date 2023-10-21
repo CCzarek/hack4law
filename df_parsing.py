@@ -148,7 +148,11 @@ def translate_text(text):
         length = 0
         words = word_tokenize(sentence)
         for word in words:
-            translated += translator.translate(word)
+            if len(word) < max_len:
+                translated += translator.translate(word)
+            else:
+                # strange words
+                translated += word
     
     # the last translation
     if to_tranlate != '':
