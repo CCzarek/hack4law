@@ -2,7 +2,6 @@ import pandas as pd
 import datetime
 import ast
 import re
-import pickle
 
 
 pd.set_option('display.max_columns', None)
@@ -41,14 +40,12 @@ for (_, orzeczenie) in df.iterrows():
 print(max_data) # last date
 
 # sprawdzanie czy dziala (czy bez duplikatow)
-print(sum(df.duplicated()))
+#print(sum(df.duplicated()))
 
 # deleting data from 'future'
 for (_, orzeczenie) in df.iterrows():
     if datetime.datetime.today() < datetime.datetime.strptime(orzeczenie['judgmentDate'], format):
         df.drop(_, inplace=True)
-
-print(df['summary'].values[100], print(df['summary'].values[200]))
 
 
 keywordsList = df['keywords'].tolist()
@@ -65,13 +62,46 @@ def cleanhtml(raw_html):
   cleantext = re.sub(' +', ' ', cleantext)
   return cleantext.strip()
 
+# function that gets list of jsons and returns list of values of one key
+def jsonkey_converter(listOfJsonStrings, key):
+    lista = ast.literal_eval(listOfJsonStrings)
+    return [sub[str(key)] for sub in lista]
+
+
 #print(df['textContent'][5839])
 df['textContent'] = df['textContent'].apply(lambda x: cleanhtml(str(x)))
 df['textContent'] = df['textContent'].apply(lambda x: x.replace('\n', ' ').replace('\r', ''))
 
-print(df['textContent'])
 
-df.to_pickle("df")
+# deconstructing jsons to list of values from one key
+df['courtCases'] = df['courtCases'].apply(lambda x: list(ast.literal_eval(x[1:-1]).values())[0])
+df['division'] = df['division'].apply(lambda x: list(ast.literal_eval(x).values())[0])
 
-firstRow = df.iloc[0]
+df['referencedRegulations_journalTitles'] = df['referencedRegulations'].apply(lambda x: jsonkey_converter(x, 'journalTitle'))
+df['referencedRegulations_texts'] = df['referencedRegulations'].apply(lambda x: jsonkey_converter(x, 'text'))
+
+df['judges_names'] = df['judges'].apply(lambda x: jsonkey_converter(x, 'name'))
+
+df['referencedCourtCases_caseNumbers'] = df['referencedCourtCases'].apply(lambda x: jsonkey_converter(x, 'caseNumber'))
+df['referencedCourtCases_judgmentIds'] = df['referencedCourtCases'].apply(lambda x: jsonkey_converter(x, 'judgmentIds'))
+
+
+#%% its dropping time
+# TODO - think about what to drop and decide together
+
+# all of them are []
+# count=0
+# for i in range(len(df)):
+#     if len(ast.literal_eval(df['lowerCourtJudgments'][i]))>0:
+#         count+=1
+# print(count)
+
+df.drop(columns=['judges', 'source', 'courtReporters', 'referencedRegulations', 'referencedCourtCases', 'textContent', 'lowerCourtJudgments'], inplace=True)
+
+df.info()
+
+
+## sth here ##
+df.to_csv('preprocessed_2023.csv')
+
 
