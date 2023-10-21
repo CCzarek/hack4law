@@ -101,8 +101,7 @@ df.drop(columns=['judges', 'source', 'courtReporters', 'referencedRegulations', 
 
 df.info()
 
-df.replace(['None', 'nan'], np.nan, inplace=True)
-df.fillna(' ', inplace=True)
+
 
 ## sth here ##
 df.to_csv('preprocessed_2023.csv')
@@ -162,14 +161,22 @@ def translate_text(text):
     return translated
     
 
-df['textContent_translated'] = df['textContent_notags'].apply(lambda x: translate_text(x))
+# df['textContent_translated'] = df['textContent_notags'].apply(lambda x: translate_text(x))
 
 def simplify_text(text):
     vals = list([val.lower() for val in text if val.isalnum() or val == " "])
     return "".join(vals)
 
-df['textContent_translated'] = df['textContent_translated'].apply(lambda x: simplify_text(x))
+# df['textContent_translated'] = df['textContent_translated'].apply(lambda x: simplify_text(x))
 
+
+
+
+df.replace(['None', 'nan'], np.nan, inplace=True)
+
+df = df[df['textContent_notags'].notna()]
+
+df.fillna('-', inplace=True)
 
 df.to_csv('preprocessed_2023.csv')
 
