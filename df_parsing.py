@@ -69,8 +69,8 @@ def jsonkey_converter(listOfJsonStrings, key):
 
 
 #print(df['textContent'][5839])
-df['textContent_notags'] = df['textContent'].apply(lambda x: cleanhtml(str(x)))
-df['textContent_notags'] = df['textContent_notags'].apply(lambda x: x.replace('\n', ' ').replace('\r', ''))
+df['textContent_notags'] = df['textContent'].apply(lambda x: str(x).replace('\n', ' ').replace('\r', ''))
+df['textContent_notags'] = df['textContent_notags'].apply(lambda x: cleanhtml(str(x)))
 
 
 # deconstructing jsons to list of values from one key
