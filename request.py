@@ -55,7 +55,7 @@ def get_data(url):
 def req(pages):
     data = []
     for i in range(pages):
-        url = "https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2010-01-01" + "&pageNumber=" + str(i)
+        url = "https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2022-01-01" + "&pageNumber=" + str(i)
         data_add = get_data(url)["items"]
         if data_add != None:
             data += get_data(url)["items"]
@@ -83,12 +83,70 @@ data["queryTemplate"]
 data["info"]
 type(data["info"])
 
+#%% what if we take too many items
+
+experiment = get_data("https://www.saos.org.pl/api/dump/judgments?pageSize=100&judgmentStartDate=2020-01-01&judgmentEndDate=2020-01-02")["items"]
+len(experiment) # 33 even i though we took 100 items and it still works
+
+#%% counting decisions
 
 decisions = 0
 for i in range(len(itemki)):
     if itemki[i]["decision"] != None:
         decisions += 1
 print(decisions)
+print(len(itemki))
 
+d1 = get_data("https://www.saos.org.pl/api/dump/judgments?pageSize=10&judgmentStartDate=2020-01-01")["items"]
+d2 = get_data("https://www.saos.org.pl/api/dump/judgments?pageSize=10&judgmentStartDate=2020-01-01&withGenerated=false")["items"]
+type(d1)
+e1 = d1[0]
+e2 = d2[0]
 
+e1.keys()
+e2.keys()
 
+set(e1)
+
+set(e1).difference(set(e2))
+
+#%% saving results
+import pickle
+
+# Function to save a list to a file using pickle
+def save_list_to_file(file_name, my_list):
+    try:
+        with open(file_name, "wb") as file:
+            pickle.dump(my_list, file)
+        print(f"List saved to {file_name}")
+    except Exception as e:
+        print(f"Error saving list to file: {e}")
+
+# Function to load a list from a file using pickle
+def load_list_from_file(file_name):
+    try:
+        with open(file_name, "rb") as file:
+            loaded_list = pickle.load(file)
+        return loaded_list
+    except Exception as e:
+        print(f"Error loading list from file: {e}")
+        return []
+
+# Sample list
+my_list = [1, 2, 3, 4, 5]
+
+# Save the list to a file
+save_list_to_file("my_list.pkl", my_list)
+
+# Load the list from the file
+loaded_list = load_list_from_file("my_list.pkl")
+
+print("Original List:", my_list)
+print("Loaded List:", loaded_list)
+
+#%% test
+
+save_list_to_file("my_list.pkl", d1)
+loaded_list = load_list_from_file("my_list.pkl")
+
+loaded_list
