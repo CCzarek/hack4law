@@ -1,8 +1,11 @@
 import pandas as pd
 import datetime
+import ast
 
 pd.set_option('display.max_columns', None)
 df = pd.read_csv('2023_orzeczenia.csv')
+
+df['keywords'] = df['keywords'].apply(ast.literal_eval)
 
 print(df.columns)
 #print(df['decision'])
@@ -40,3 +43,12 @@ print(sum(df.duplicated()))
 print(df.iloc[0]==df.iloc[100])
 
 print(df['summary'].values[100], print(df['summary'].values[200]))
+
+firstRow = df.iloc[0]
+
+keywordsList = df['keywords'].tolist()
+keywords = set()
+for listk in keywordsList:
+    for el in listk:
+        keywords.add(el)
+        
