@@ -1,7 +1,8 @@
 # generalnie scrap, ale może się jeszcze przyda
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import *
+import pandas as pd
 
 # klaska
 
@@ -45,6 +46,8 @@ def go_back():
     back_button.pack_forget()
     results_frame.pack(fill=tk.BOTH, expand=True)
 
+df = pd.read_csv("preprocessed_2023_100.csv")
+
 app = tk.Tk()
 app.title("Okoliczni Prawnicy TYTUL APKI OMG OMG")
 
@@ -70,10 +73,42 @@ filter_label.pack(pady=10)
 text_input = tk.Entry(sidebar_frame, width=30)
 text_input.pack()
 
+# Autocomplete combobox
+def checkkey(event):
+    value = event.widget.get()
+    print(value)
+    if value == '':
+        data = list(keywords)
+    else:
+        data = [item for item in keywords if value.lower() in item.lower()]
+    update(data)
+
+def update(data):
+    lb.delete(0, 'end')
+    for item in data:
+        lb.insert('end', item)
+
+import ast
+df['keywords'] = df['keywords'].apply(ast.literal_eval)
+keywordsList = df['keywords'].tolist()
+keywords = set()
+for listk in keywordsList:
+    for el in listk:
+        keywords.add(el)
+
+e = Entry(sidebar_frame)
+e.pack()
+e.bind('<KeyRelease>', checkkey)
+
+lb = Listbox(sidebar_frame, selectmode='multiple')
+lb.pack()
+update(keywords)
+
 # Function to get the text when a button is clicked
 def get_text():
     entered_text = text_input.get()
-    print("Entered Text:", entered_text)
+    selection = [lb.get(i) for i in lb.curselection()]
+    print("Entered Text:", entered_text, '\n', selection)
 
 # Create a button to trigger an action
 button = tk.Button(sidebar_frame, text="Enter", command=get_text, width=15)
@@ -97,7 +132,7 @@ results_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 results_listbox.bind("<<ListboxSelect>>", on_result_selected)
 
 # Scrollbar
-scrollbar = ttk.Scrollbar(results_frame, command=results_listbox.yview)
+scrollbar = tk.Scrollbar(results_frame, command=results_listbox.yview)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 results_listbox.config(yscrollcommand=scrollbar.set)
 
@@ -111,7 +146,7 @@ details_label = tk.Label(main_frame)
 # Przycisk powrotu
 back_button = tk.Button(main_frame, text="Powrót", command=go_back)
 
-app.geometry("1280x720")
+app.geometry("800x600")
 app.resizable(False, False)
 
 app.mainloop()
