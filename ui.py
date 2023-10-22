@@ -1,6 +1,10 @@
 # generalnie scrap, ale może się jeszcze przyda
 
+print("start dziwki i kurewki")
+
 import tkinter as tk
+from tkinter import ttk
+from tkcalendar import DateEntry
 from tkinter import *
 import pandas as pd
 import chromadb
@@ -8,11 +12,13 @@ import pandas as pd
 from database import search
 import ast
 
+print("dupa-1-----------------------------------------------------------")
 
 CONTENT_NAME = 'textContent_notags_eng100'
 client = chromadb.HttpClient(host='localhost', port=8000)
 df = pd.read_csv("preprocessed_2023_100.csv")
 
+print("dupa0==========================================================")
 # klaska
 
 class MultiSelectInput(tk.Frame):
@@ -49,6 +55,7 @@ def on_result_selected(event):
         details_label.pack(pady=10, fill=tk.BOTH, expand=True)
         back_button.pack(pady=10)
 
+
 def go_back():
     # Ukryj szczegóły i pokaż listę wyników
     details_label.pack_forget()
@@ -69,7 +76,7 @@ header_label.pack(pady=10)
 # Pasek boczny z kryteriami wyszukiwania
 sidebar_frame = tk.Frame(app)
 sidebar_frame.pack(side=tk.LEFT, fill=tk.Y)
-filter_label = tk.Label(sidebar_frame, text="Kryteria wyszukiwania")
+filter_label = tk.Label(sidebar_frame, text="Kryteria wyszukiwania", padx=20)
 filter_label.pack(pady=10)
 # TODO: Dodaj tutaj więcej kontrolek do filtrowania
 # nowe
@@ -80,7 +87,23 @@ filter_label.pack(pady=10)
 
 # Create a text input field
 text_input = tk.Entry(sidebar_frame, width=30)
-text_input.pack()
+text_input.pack(padx=5)
+
+print("dupa2")
+
+# daty
+start_date_label = tk.Label(sidebar_frame, text="Data początkowa:")
+start_date_label.pack(anchor="w", pady=(5, 5), padx=10)
+start_date_entry = DateEntry(sidebar_frame, width=12, background='blue', foreground='white', borderwidth=2, date_pattern='dd-mm-yyyy')
+start_date_entry.pack(anchor="w", pady=(5, 10), padx=10)
+
+# Label i DateEntry dla daty końcowej
+end_date_label = tk.Label(sidebar_frame, text="Data końcowa:")
+end_date_label.pack(anchor="w", pady=(5, 5), padx=10)
+end_date_entry = DateEntry(sidebar_frame, width=12, background='blue', foreground='white', borderwidth=2, date_pattern='dd-mm-yyyy')
+end_date_entry.pack(anchor="w", pady=5, padx=10)
+
+
 
 # Autocomplete combobox
 def checkkey(event):
@@ -97,6 +120,10 @@ def update(data):
     for item in data:
         lb.insert('end', item)
 
+print("dupa3")
+
+df = pd.read_csv("preprocessed_2023_100.csv")
+
 df['keywords'] = df['keywords'].apply(ast.literal_eval)
 keywordsList = df['keywords'].tolist()
 keywords = set()
@@ -104,13 +131,15 @@ for listk in keywordsList:
     for el in listk:
         keywords.add(el)
 
+print("dupa4")
+
 e = Entry(sidebar_frame)
 e.pack()
 e.bind('<KeyRelease>', checkkey)
 
 lb = Listbox(sidebar_frame, selectmode='multiple')
 lb.pack()
-update(keywords)
+# update(keywords)
 
 def keywordFilter(ser, keywords):
     l = ser.to_list()
@@ -131,6 +160,8 @@ def get_text():
     i = 0
     results_listbox.delete(0, END)
     entered_text = text_input.get()
+    print("Entered Text:", entered_text)
+    print(start_date_entry.get(), end_date_entry.get())
     selection = [lb.get(i) for i in lb.curselection()]
     rowsSelected = df[keywordFilter(df['keywords'], selection)]
     n = len(rowsSelected['keywords'].to_list())
