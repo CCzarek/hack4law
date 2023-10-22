@@ -15,6 +15,9 @@ Welcome to our project on court judgment analysis! Our application allows you to
 ## Innovation in Our Project 🚀
 - **Keywords**: Advanced search algorithms based on keywords help locate the most relevant cases.
 - **AI Data Clustering**: Leveraging data clustering technology enables even more precise matching of similar cases.
+
+
+  
   We made a division to a few type of cases, depending on keywords:
 - 📋💼 **Social Insurance and Benefits**
   
@@ -50,3 +53,5 @@ Welcome to our project on court judgment analysis! Our application allows you to
 
 Thank you for your interest in our project! If you have questions or suggestions, please get in touch. Together, we're shaping the future of judgment analysis! 🌐🔗📜
 Visit our profiles for more data analysis projects ->
+
+  ![image](https://i.imgur.com/VNLAiLf.png)
