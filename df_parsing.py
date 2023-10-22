@@ -145,7 +145,6 @@ def translate_text(text):
             to_tranlate = sentence
             length = len(sentence)
             continue
-        # too big sentence
         length = 0
         words = word_tokenize(sentence)
         for word in words:
@@ -154,29 +153,30 @@ def translate_text(text):
             else:
                 # strange words
                 translated += word
-    # the last translation
     if to_tranlate != '':
         translated += translator.translate(to_tranlate)
     
     return translated
     
-
-# df['textContent_translated'] = df['textContent_notags'].apply(lambda x: translate_text(x))
-
-def simplify_text(text):
-    vals = list([val.lower() for val in text if val.isalnum() or val == " "])
-    return "".join(vals)
-
-# df['textContent_translated'] = df['textContent_translated'].apply(lambda x: simplify_text(x))
-
-
-
-
 df.replace(['None', 'nan'], np.nan, inplace=True)
 
 df = df[df['textContent_notags'].notna()]
 
 df.fillna('-', inplace=True)
 
-df.to_csv('preprocessed_2023.csv')
+###
+df100 = df.head(100)
+
+df100['textContent_translated'] = df100['textContent_notags'].apply(lambda x: translate_text(x))
+
+def simplify_text(text):
+    vals = list([val.lower() for val in text if val.isalnum() or val == " "])
+    return "".join(vals)
+
+df100['textContent_translated'] = df100['textContent_translated'].apply(lambda x: simplify_text(x))
+
+
+df100.to_csv('preprocessed_2023_100.csv')
+
+translate_text("dzieci nauczyciele pracownik")
 
