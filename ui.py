@@ -3,6 +3,14 @@
 import tkinter as tk
 from tkinter import *
 import pandas as pd
+import chromadb
+import pandas as pd
+from database import search
+import ast
+
+
+CONTENT_NAME = 'textContent_notags_eng100'
+client = chromadb.HttpClient(host='localhost', port=8000)
 
 # klaska
 
@@ -45,8 +53,8 @@ def go_back():
     details_label.pack_forget()
     back_button.pack_forget()
     results_frame.pack(fill=tk.BOTH, expand=True)
-
-df = pd.read_csv("preprocessed_2023_100.csv")
+    
+content = client.get_collection(CLIENT_NAME) 
 
 app = tk.Tk()
 app.title("Okoliczni Prawnicy TYTUL APKI OMG OMG")
@@ -88,7 +96,6 @@ def update(data):
     for item in data:
         lb.insert('end', item)
 
-import ast
 df['keywords'] = df['keywords'].apply(ast.literal_eval)
 keywordsList = df['keywords'].tolist()
 keywords = set()
@@ -108,7 +115,8 @@ update(keywords)
 def get_text():
     entered_text = text_input.get()
     selection = [lb.get(i) for i in lb.curselection()]
-    print("Entered Text:", entered_text, '\n', selection)
+    for keyword in selection:
+        rows = df[keyword in df['keywords']]
 
 # Create a button to trigger an action
 button = tk.Button(sidebar_frame, text="Enter", command=get_text, width=15)
