@@ -1,5 +1,3 @@
-# generalnie scrap, ale może się jeszcze przyda
-
 import tkinter as tk
 from datetime import date
 from tkinter import ttk
@@ -19,7 +17,7 @@ df = pd.read_csv("preprocessed_2023_100.csv")
 df = df.rename(columns={"Unnamed: 0": "index"})
 
 global current_ids
-# klaska
+
 
 class MultiSelectInput(tk.Frame):
     def __init__(self, master=None, label="Wybór", choices=None, default=None, **kwargs):
@@ -41,14 +39,12 @@ class MultiSelectInput(tk.Frame):
     def get_selected(self):
         return [self.listbox.get(i) for i in self.listbox.curselection()]
 
-# klaska end
 
 CLEANR = re.compile('<.*?>')
 def cleanhtml(raw_html):
   cleantext = re.sub(CLEANR, '', raw_html)
   cleantext = re.sub(' +', ' ', cleantext)
   return cleantext
-
 
 
 def on_result_selected(event):
@@ -68,8 +64,6 @@ def on_result_selected(event):
                                   f"Typ organu orzekającego:  {my_row['courtType']} \n" +
                              f"Data: {my_row['judgmentDate']}\n "+
                              f"Rodzaj orzeczenia: {my_row['judgmentType']}\n"
-                             # f"Frazy kluczowe: {my_row['keywords']}\n" +
-                             # f"Treść: {text_good}\n"
                              )
 
         print(my_row)
@@ -79,9 +73,7 @@ def on_result_selected(event):
         print()
 
 
-
 def go_back():
-    # Ukryj szczegóły i pokaż listę wyników
     details_label.pack_forget()
     back_button.pack_forget()
     results_frame.pack(fill=tk.BOTH, expand=True)
@@ -92,44 +84,31 @@ content = client.get_collection(CONTENT_NAME)
 app = tk.Tk()
 app.title("Okoliczni Prawnicy")
 
-# Górny pasek z nazwą aplikacji
 header_frame = tk.Frame(app, bg="gray")
 header_frame.pack(side=tk.TOP, fill=tk.X)
 header_label = tk.Label(header_frame, text="Okoliczni Prawnicy", bg="gray", fg="white", font=("Arial", 16))
 header_label.pack(pady=10)
 
-# Pasek boczny z kryteriami wyszukiwania
 sidebar_frame = tk.Frame(app)
 sidebar_frame.pack(side=tk.LEFT, fill=tk.Y)
 filter_label = tk.Label(sidebar_frame, text="Kryteria wyszukiwania", padx=20)
 filter_label.pack(pady=10)
-# TODO: Dodaj tutaj więcej kontrolek do filtrowania
-# nowe
 
-# Create a label to describe the text input
-# label = tk.Label(sidebar_frame, text="Enter Text:")
-# label.pack()
-
-# Create a text input field
 text_input = tk.Entry(sidebar_frame, width=30)
 text_input.pack(padx=5)
 
-
-# daty
 start_date_label = tk.Label(sidebar_frame, text="Data początkowa:")
 start_date_label.pack(anchor="w", pady=(5, 5), padx=10)
 start_date_entry = DateEntry(sidebar_frame, width=12, background='blue', foreground='white', borderwidth=2, date_pattern='dd-mm-yyyy')
 start_date_entry.set_date(date(2020, 1, 1))
 start_date_entry.pack(anchor="w", pady=(5, 10), padx=10)
 
-# Label i DateEntry dla daty końcowej
 end_date_label = tk.Label(sidebar_frame, text="Data końcowa:")
 end_date_label.pack(anchor="w", pady=(5, 5), padx=10)
 end_date_entry = DateEntry(sidebar_frame, width=12, background='blue', foreground='white', borderwidth=2, date_pattern='dd-mm-yyyy')
 end_date_entry.pack(anchor="w", pady=5, padx=10)
 
 
-# Autocomplete combobox
 def checkkey(event):
     value = event.widget.get()
     print(value)
@@ -152,7 +131,7 @@ keywords = set()
 for listk in keywordsList:
     for el in listk:
         keywords.add(el)
-# print(keywords)
+
 
 combo_label = tk.Label(sidebar_frame, text="Kluczowe frazy", padx=20)
 combo_label.pack(pady=10)
@@ -180,6 +159,7 @@ def keywordFilter(ser, keywords):
             res.append(False)
     return res
 
+
 def get_row(selected_index): # upoślodzony wiersz TODO
     val = results_listbox.get(selected_index)
     print(val)
@@ -187,16 +167,13 @@ def get_row(selected_index): # upoślodzony wiersz TODO
     print(row)
     return row
 
-# Function to get the text when a button is clicked
+
 def get_text():
     i = 0
     results_listbox.delete(0, END)
     entered_text = text_input.get()
     selection = [lb.get(i) for i in lb.curselection()]
     rowsSelected = df[keywordFilter(df['keywords'], selection)]
-
-    # print(rowsSelected)
-
     n = len(rowsSelected['keywords'].to_list())
     quantity = 20
     keywordsIds = rowsSelected['index'].to_list()
@@ -220,35 +197,30 @@ def get_text():
     current_ids = ids
 
 
-# Create a button to trigger an action
 button = tk.Button(sidebar_frame, text="Enter", command=get_text, width=15)
 button.pack()
 
-# Główne okno
+
 main_frame = tk.Frame(app)
 main_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-# Ramka dla listy wyników i paska przewijania
+
 results_frame = tk.Frame(main_frame)
 results_frame.pack(fill=tk.BOTH, expand=True)
 
-# Przewijalna lista wyników
+
 results_listbox = tk.Listbox(results_frame, yscrollcommand=lambda f1, f2: scrollbar.set(f1, f2))
 results_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 results_listbox.bind("<<ListboxSelect>>", on_result_selected)
 
-# Scrollbar
+
 scrollbar = tk.Scrollbar(results_frame, command=results_listbox.yview)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 results_listbox.config(yscrollcommand=scrollbar.set)
 
-# Etykieta do wyświetlania szczegółów
+
 details_label = tk.Label(main_frame)
-# scrolled_label = scrolledtext.ScrolledText(main_frame, wrap=tk.WORD, width=40, height=10)
-# scrolled_label.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
-
-# Przycisk powrotu
 back_button = tk.Button(main_frame, text="Powrót", command=go_back)
 
 app.geometry("800x600")
