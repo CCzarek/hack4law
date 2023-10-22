@@ -44,6 +44,7 @@ def translate_text(text):
     return translated
 
 df = pd.read_csv("preprocessed_2023_100.csv")
+df.rename(columns={"Unnamed: 0": "index"})
 
 firstRow = df.iloc[0]
 
@@ -71,7 +72,7 @@ def main():
     
     textContent.add(
         documents=df['textContent_translated'].to_list(),
-        ids=[str(i) for i in range(len(df['textContent'].to_list()))],
+        ids=[str(i) for i in df['index'].to_list()],
         metadatas=metadataList,
     )
 

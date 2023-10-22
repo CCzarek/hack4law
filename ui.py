@@ -14,6 +14,7 @@ import ast
 CONTENT_NAME = 'textContent_notags_eng100'
 client = chromadb.HttpClient(host='localhost', port=8000)
 df = pd.read_csv("preprocessed_2023_100.csv")
+df = df.rename(columns={"Unnamed: 0": "index"})
 
 # klaska
 
@@ -43,6 +44,7 @@ class MultiSelectInput(tk.Frame):
 def on_result_selected(event):
     # Pobierz zaznaczony element
     selected_index = results_listbox.curselection()
+    print(get_row(selected_index[0]))
     if selected_index:
         selected_item = results_listbox.get(selected_index[0])
         # Ukryj listę wyników i pokaż szczegóły
@@ -115,7 +117,6 @@ def update(data):
     for item in data:
         lb.insert('end', item)
 
-df = pd.read_csv("preprocessed_2023_100.csv")
 
 df['keywords'] = df['keywords'].apply(ast.literal_eval)
 keywordsList = df['keywords'].tolist()
@@ -123,8 +124,9 @@ keywords = set()
 for listk in keywordsList:
     for el in listk:
         keywords.add(el)
-print(keywords)
 
+combo_label = tk.Label(sidebar_frame, text="Kluczowe frazy", padx=20)
+combo_label.pack(pady=10)
 
 e = Entry(sidebar_frame)
 e.pack()
@@ -148,6 +150,13 @@ def keywordFilter(ser, keywords):
             res.append(False)
     return res
 
+def get_row(selected_index):
+    val = results_listbox.get(selected_index)
+    print(val)
+    row = df[df['courtCases'] == val]
+    print(row)
+    return row
+
 # Function to get the text when a button is clicked
 def get_text():
     i = 0
@@ -156,10 +165,25 @@ def get_text():
     selection = [lb.get(i) for i in lb.curselection()]
     rowsSelected = df[keywordFilter(df['keywords'], selection)]
     n = len(rowsSelected['keywords'].to_list())
-    for el in rowsSelected['courtCases'].to_list():
-        results_listbox.insert(i, el)
+    quantity = 20
+    keywordsIds = rowsSelected['index'].to_list()
+    ids = search(content, entered_text, quantity)
+    ids = [eval(i) for i in ids]
+    st1 = [val for val in keywordsIds if val in ids]
+    nd2 = [val for val in keywordsIds if not val in ids]
+    rd3 = [val for val in ids if not val in keywordsIds]
+    for el in st1:
+        results_listbox.insert(i, rowsSelected[rowsSelected['index'] == el]['courtCases'].values[0])
         i+=1
-        
+    for el in nd2:
+        if i <= 20:
+            results_listbox.insert(i, df[df['index'] == el]['courtCases'].values[0])
+            i+=1
+    for el in rd3:
+        if i <= 20:
+            results_listbox.insert(i, df[df['index'] == el]['courtCases'].values[0])
+            i+=1
+
 
 # Create a button to trigger an action
 button = tk.Button(sidebar_frame, text="Enter", command=get_text, width=15)
