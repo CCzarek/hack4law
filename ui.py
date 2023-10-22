@@ -1,7 +1,5 @@
 # generalnie scrap, ale może się jeszcze przyda
 
-print("start dziwki i kurewki")
-
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import DateEntry
@@ -12,13 +10,11 @@ import pandas as pd
 from database import search
 import ast
 
-print("dupa-1-----------------------------------------------------------")
 
 CONTENT_NAME = 'textContent_notags_eng100'
 client = chromadb.HttpClient(host='localhost', port=8000)
 df = pd.read_csv("preprocessed_2023_100.csv")
 
-print("dupa0==========================================================")
 # klaska
 
 class MultiSelectInput(tk.Frame):
@@ -89,7 +85,6 @@ filter_label.pack(pady=10)
 text_input = tk.Entry(sidebar_frame, width=30)
 text_input.pack(padx=5)
 
-print("dupa2")
 
 # daty
 start_date_label = tk.Label(sidebar_frame, text="Data początkowa:")
@@ -120,8 +115,6 @@ def update(data):
     for item in data:
         lb.insert('end', item)
 
-print("dupa3")
-
 df = pd.read_csv("preprocessed_2023_100.csv")
 
 df['keywords'] = df['keywords'].apply(ast.literal_eval)
@@ -130,8 +123,8 @@ keywords = set()
 for listk in keywordsList:
     for el in listk:
         keywords.add(el)
+print(keywords)
 
-print("dupa4")
 
 e = Entry(sidebar_frame)
 e.pack()
@@ -139,7 +132,7 @@ e.bind('<KeyRelease>', checkkey)
 
 lb = Listbox(sidebar_frame, selectmode='multiple')
 lb.pack()
-# update(keywords)
+update(keywords)
 
 def keywordFilter(ser, keywords):
     l = ser.to_list()
@@ -160,8 +153,6 @@ def get_text():
     i = 0
     results_listbox.delete(0, END)
     entered_text = text_input.get()
-    print("Entered Text:", entered_text)
-    print(start_date_entry.get(), end_date_entry.get())
     selection = [lb.get(i) for i in lb.curselection()]
     rowsSelected = df[keywordFilter(df['keywords'], selection)]
     n = len(rowsSelected['keywords'].to_list())
