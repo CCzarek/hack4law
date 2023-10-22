@@ -11,6 +11,7 @@ import ast
 
 CONTENT_NAME = 'textContent_notags_eng100'
 client = chromadb.HttpClient(host='localhost', port=8000)
+df = pd.read_csv("preprocessed_2023_100.csv")
 
 # klaska
 
@@ -54,7 +55,7 @@ def go_back():
     back_button.pack_forget()
     results_frame.pack(fill=tk.BOTH, expand=True)
     
-content = client.get_collection(CLIENT_NAME) 
+content = client.get_collection(CONTENT_NAME) 
 
 app = tk.Tk()
 app.title("Okoliczni Prawnicy TYTUL APKI OMG OMG")
@@ -111,12 +112,32 @@ lb = Listbox(sidebar_frame, selectmode='multiple')
 lb.pack()
 update(keywords)
 
+def keywordFilter(ser, keywords):
+    l = ser.to_list()
+    res = []
+    for el in l:
+        x = True
+        for keyword in keywords:
+            if keyword in el:
+                res.append(True)
+                x = False
+                break                
+        if x:
+            res.append(False)
+    return res
+
 # Function to get the text when a button is clicked
 def get_text():
+    i = 0
+    results_listbox.delete(0, END)
     entered_text = text_input.get()
     selection = [lb.get(i) for i in lb.curselection()]
-    for keyword in selection:
-        rows = df[keyword in df['keywords']]
+    rowsSelected = df[keywordFilter(df['keywords'], selection)]
+    n = len(rowsSelected['keywords'].to_list())
+    for el in rowsSelected['courtCases'].to_list():
+        results_listbox.insert(i, el)
+        i+=1
+        
 
 # Create a button to trigger an action
 button = tk.Button(sidebar_frame, text="Enter", command=get_text, width=15)
@@ -143,10 +164,6 @@ results_listbox.bind("<<ListboxSelect>>", on_result_selected)
 scrollbar = tk.Scrollbar(results_frame, command=results_listbox.yview)
 scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 results_listbox.config(yscrollcommand=scrollbar.set)
-
-# Dodajmy kilka przykładowych wyników
-for i in range(100):
-    results_listbox.insert(tk.END, f"Wynik {i}")
 
 # Etykieta do wyświetlania szczegółów
 details_label = tk.Label(main_frame)
