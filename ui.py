@@ -62,6 +62,23 @@ filter_label.pack(pady=10)
 # TODO: Dodaj tutaj więcej kontrolek do filtrowania
 # nowe
 
+# Create a label to describe the text input
+# label = tk.Label(sidebar_frame, text="Enter Text:")
+# label.pack()
+
+# Create a text input field
+text_input = tk.Entry(sidebar_frame, width=30)
+text_input.pack()
+
+# Function to get the text when a button is clicked
+def get_text():
+    entered_text = text_input.get()
+    print("Entered Text:", entered_text)
+
+# Create a button to trigger an action
+button = tk.Button(sidebar_frame, text="Enter", command=get_text, width=15)
+button.pack()
+
 
 # nowe end
 
