@@ -14,7 +14,7 @@ import ast
 CONTENT_NAME = 'textContent_notags_eng100'
 client = chromadb.HttpClient(host='localhost', port=8000)
 df = pd.read_csv("preprocessed_2023_100.csv")
-df = df.rename(columns={"Unnamed: 0": "index"})
+df['index'] = df.index
 
 # klaska
 
@@ -44,7 +44,6 @@ class MultiSelectInput(tk.Frame):
 def on_result_selected(event):
     # Pobierz zaznaczony element
     selected_index = results_listbox.curselection()
-    print(get_row(selected_index[0]))
     if selected_index:
         selected_item = results_listbox.get(selected_index[0])
         # Ukryj listę wyników i pokaż szczegóły
@@ -169,6 +168,8 @@ def get_text():
     keywordsIds = rowsSelected['index'].to_list()
     ids = search(content, entered_text, quantity)
     ids = [eval(i) for i in ids]
+    print(ids)
+    print(keywordsIds)
     st1 = [val for val in keywordsIds if val in ids]
     nd2 = [val for val in keywordsIds if not val in ids]
     rd3 = [val for val in ids if not val in keywordsIds]
@@ -181,6 +182,8 @@ def get_text():
             i+=1
     for el in rd3:
         if i <= 20:
+            print(el)
+            print(df[df['index'] == el])
             results_listbox.insert(i, df[df['index'] == el]['courtCases'].values[0])
             i+=1
 

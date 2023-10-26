@@ -44,11 +44,13 @@ def translate_text(text):
     return translated
 
 df = pd.read_csv("preprocessed_2023_100.csv")
-df.rename(columns={"Unnamed: 0": "index"})
+df['index'] = df.index
 
 firstRow = df.iloc[0]
 
 def search(content, text, quantity = 5):
+    if text == "":
+        return
     translatedText = translate_text(text)
     results = content.query(
         query_texts=text,
