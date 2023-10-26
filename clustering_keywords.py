@@ -14,15 +14,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
 # w tym pliku dzielimy na klastry czesc danych, mala czesc zeby przemielilo. zobaczymy jakie wyjda keywordy i polaczymy w klastry
-# w tym pliku na sztywno wpisane jest 15 klastrow, mozna pokombinowac ale nie ma czasu chyba
-# data puszczenia z n=430 i klastry=15: 6:50
-
 df = pd.read_csv('preprocessed_2023.csv')
 
 n=430
-klastry = 15
-
-df=df.head(n)
 
 words=[]
 paragrafy=[]
@@ -53,7 +47,7 @@ print(nokeys/len(df))
 print(len(paragrafy))
 print(len(set(paragrafy)))
 
-# do tego momentu cos sobie tam sprawdzamy, nie ma tu nlp
+
 df = df['textContent_notags']
 
 df = df.dropna()
@@ -119,6 +113,8 @@ df = df.apply(lambda x: simplify_text(x))
 
 train_df, test_df = train_test_split(df, test_size=0.3, shuffle=False)
 
+print("kotek")
+print(train_df)
 # extracting texts into variables
 texts_train = copy.deepcopy(train_df)
 texts_test = copy.deepcopy(test_df)
@@ -228,7 +224,7 @@ def plot_feature_importance(X, y, limit=10):
 
 #metrics_plots(X_train_tfidf_df)
 
-n_clusters = klastry
+n_clusters = n
 
 kmeans = KMeans(n_clusters=n_clusters, random_state=0, n_init=10)
 
@@ -316,7 +312,7 @@ data = test_texts
 
 cluster_names = {}
 
-for i in range(klastry):
+for i in range(n):
     # Get the data points belonging to the current cluster
     cluster_data = [data[j] for j in range(len(data)) if cluster_labels[j] == i]
 

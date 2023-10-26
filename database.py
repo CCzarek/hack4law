@@ -60,9 +60,10 @@ def search(content, text, quantity = 5):
 
 def main():  
     client = chromadb.HttpClient(host='localhost', port=8000)
+    
     #client.reset()
-    textContent = client.get_collection("textContent_notags_eng100")
-    #textContent = client.create_collection(name="textContent_notags_eng100")
+#    textContent = client.get_collection("textContent_notags_eng100")
+    textContent = client.create_collection(name="textContent_notags_eng100")
     [str(i) for i in range(len(df['textContent'].to_list()))]
     
     
