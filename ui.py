@@ -9,6 +9,7 @@ import pandas as pd
 from database import search
 import ast
 from tkinter import scrolledtext
+import re
 
 
 CONTENT_NAME = 'textContent_notags_eng100'
@@ -66,11 +67,9 @@ def on_result_selected(event):
                              f"Rodzaj orzeczenia: {my_row['judgmentType']}\n"
                              )
 
-        print(my_row)
 
         details_label.pack(pady=10, fill=tk.BOTH, expand=True)
         back_button.pack(pady=10)
-        print()
 
 
 def go_back():
@@ -111,7 +110,6 @@ end_date_entry.pack(anchor="w", pady=5, padx=10)
 
 def checkkey(event):
     value = event.widget.get()
-    print(value)
     if value == '':
         data = list(keywords)
     else:
@@ -162,9 +160,7 @@ def keywordFilter(ser, keywords):
 
 def get_row(selected_index): # upoślodzony wiersz TODO
     val = results_listbox.get(selected_index)
-    print(val)
     row = df[df['courtCases'] == val]
-    print(row)
     return row
 
 
@@ -179,8 +175,6 @@ def get_text():
     keywordsIds = rowsSelected['index'].to_list()
     ids = search(content, entered_text, quantity)
     ids = [eval(i) for i in ids]
-    print(ids)
-    print(keywordsIds)
     st1 = [val for val in keywordsIds if val in ids]
     nd2 = [val for val in keywordsIds if not val in ids]
     rd3 = [val for val in ids if not val in keywordsIds]
@@ -193,8 +187,6 @@ def get_text():
             i+=1
     for el in rd3:
         if i <= 20:
-            print(el)
-            print(df[df['index'] == el])
             results_listbox.insert(i, df[df['index'] == el]['courtCases'].values[0])
             i+=1
     global current_ids
