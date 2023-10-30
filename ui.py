@@ -1,14 +1,12 @@
 import tkinter as tk
 from datetime import date
-from tkinter import ttk
+import tkinter.scrolledtext as st
 from tkcalendar import DateEntry
 from tkinter import *
-import pandas as pd
 import chromadb
 import pandas as pd
 from database import search
 import ast
-from tkinter import scrolledtext
 import re
 
 
@@ -61,19 +59,34 @@ def on_result_selected(event):
         text_html = my_row['textContent']
         text_good = cleanhtml(text_html)
 
-        details_label.config(text=f"Szczegóły dla: {selected_item} \n"+
+        text=str(f"Szczegóły dla: {selected_item} \n"+
                                   f"Typ organu orzekającego:  {my_row['courtType']} \n" +
                              f"Data: {my_row['judgmentDate']}\n "+
-                             f"Rodzaj orzeczenia: {my_row['judgmentType']}\n"
-                             )
+                             f"Rodzaj orzeczenia: {my_row['judgmentType']}\n"+
+                            text_good)
+
+        text_area.configure(state='normal')
+        text_area.insert(tk.INSERT, text)
+        text_area.configure(state='disabled')
+
+        # details_label.config(text=f"Szczegóły dla: {selected_item} \n"+
+        #                           f"Typ organu orzekającego:  {my_row['courtType']} \n" +
+        #                      f"Data: {my_row['judgmentDate']}\n "+
+        #                      f"Rodzaj orzeczenia: {my_row['judgmentType']}\n"+
+        #                     text_good
+        #                      )
 
 
-        details_label.pack(pady=10, fill=tk.BOTH, expand=True)
-        back_button.pack(pady=10)
+        text_area.pack(pady=10, padx=10, fill=tk.BOTH, expand=True)
+        text_area.update()
+        back_button.pack(pady=10, padx=10)
 
 
 def go_back():
-    details_label.pack_forget()
+    text_area.configure(state='normal')
+    text_area.delete('1.0', END)
+    text_area.configure(state='disabled')
+    text_area.pack_forget()
     back_button.pack_forget()
     results_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -200,26 +213,23 @@ button.pack()
 main_frame = tk.Frame(app)
 main_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-
 results_frame = tk.Frame(main_frame)
 results_frame.pack(fill=tk.BOTH, expand=True)
 
-
-results_listbox = tk.Listbox(results_frame, yscrollcommand=lambda f1, f2: scrollbar.set(f1, f2))
+results_listbox = tk.Listbox(results_frame)
 results_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 results_listbox.bind("<<ListboxSelect>>", on_result_selected)
 
+text_area = st.ScrolledText(main_frame,
+                            width=30,
+                            height=8,
+                            font=("Comic Sans MS",
+                                  10))
 
-scrollbar = tk.Scrollbar(results_frame, command=results_listbox.yview)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-results_listbox.config(yscrollcommand=scrollbar.set)
-
-
-details_label = tk.Label(main_frame)
 
 back_button = tk.Button(main_frame, text="Powrót", command=go_back)
 
-app.geometry("800x600")
-app.resizable(False, False)
+app.geometry("900x600")
+app.resizable(True, True)
 
 app.mainloop()
