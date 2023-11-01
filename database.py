@@ -53,7 +53,7 @@ def search(content, text, quantity = 5):
         return
     translatedText = translate_text(text)
     results = content.query(
-        query_texts=text,
+        query_texts=translatedText,
         n_results=quantity
         )
     return results['ids'][0]
