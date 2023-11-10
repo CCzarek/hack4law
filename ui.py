@@ -186,8 +186,13 @@ def get_text():
     n = len(rowsSelected['keywords'].to_list())
     quantity = 20
     keywordsIds = rowsSelected['index'].to_list()
+    
     ids = search(content, entered_text, quantity)
-    ids = [eval(i) for i in ids]
+    # there are some results
+    if ids != None: 
+        ids = [eval(i) for i in ids]
+    else:
+        ids = []
     st1 = [val for val in keywordsIds if val in ids]
     nd2 = [val for val in keywordsIds if not val in ids]
     rd3 = [val for val in ids if not val in keywordsIds]
