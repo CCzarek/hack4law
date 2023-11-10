@@ -182,11 +182,13 @@ def get_text():
     results_listbox.delete(0, END)
     entered_text = text_input.get()
     selection = [lb.get(i) for i in lb.curselection()]
+    #print(f"selection: {selection}")
     rowsSelected = df[keywordFilter(df['keywords'], selection)]
+    #print(f"rowsSelected\n: {rowsSelected}")
     n = len(rowsSelected['keywords'].to_list())
     quantity = 20
     keywordsIds = rowsSelected['index'].to_list()
-    
+    #print(f"keywordsIds: {keywordsIds}")
     ids = search(content, entered_text, quantity)
     # there are some results
     if ids != None: 
@@ -194,8 +196,11 @@ def get_text():
     else:
         ids = []
     st1 = [val for val in keywordsIds if val in ids]
+    #print(f"st1: {st1}")
     nd2 = [val for val in keywordsIds if not val in ids]
+    #print(f"nd2: {nd2}")
     rd3 = [val for val in ids if not val in keywordsIds]
+    #print(f"rd3: {rd3}")
     for el in st1:
         results_listbox.insert(i, rowsSelected[rowsSelected['index'] == el]['courtCases'].values[0])
         i+=1
@@ -208,7 +213,8 @@ def get_text():
             results_listbox.insert(i, df[df['index'] == el]['courtCases'].values[0])
             i+=1
     global current_ids
-    current_ids = ids
+    #current_ids = ids # tu jest blad
+    current_ids = st1 + nd2 + rd3
 
 
 button = tk.Button(sidebar_frame, text="Enter", command=get_text, width=15)
